@@ -1,0 +1,250 @@
+---
+judul: Cara Membuat Website dengan Next.js untuk Pemula
+tanggal: '2026-08-27'
+ringkasan: Panduan lengkap membuat website dengan Next.js untuk pemula, dari instalasi hingga deploy, dengan penjelasan fitur unggulan framework React populer ini.
+---
+
+## Apa Itu Next.js?
+
+Next.js adalah framework React open-source yang dikembangkan oleh Vercel. Berbeda dari React biasa yang hanya menghasilkan Single Page Application (SPA) yang di-render di browser, Next.js menawarkan berbagai mode rendering: Server Side Rendering (SSR), Static Site Generation (SSG), dan Incremental Static Regeneration (ISR). Kombinasi ini membuat Next.js menjadi pilihan terpopuler untuk membangun website dan aplikasi web modern yang membutuhkan performa tinggi dan SEO yang baik.
+
+Sejak peluncurannya, Next.js telah menjadi salah satu framework JavaScript paling populer di dunia, digunakan oleh perusahaan seperti Netflix, GitHub, TikTok, dan ribuan bisnis lainnya.
+
+## Mengapa Next.js Populer?
+
+### SEO yang Lebih Baik dari React Biasa
+
+React SPA murni memiliki masalah SEO karena konten di-render oleh JavaScript di browser — Google dan mesin pencari lain mungkin tidak bisa mengindeks konten secara optimal. Next.js memecahkan ini dengan server-side rendering, di mana HTML sudah ter-generate di server sebelum sampai ke browser.
+
+### Performa Tinggi
+
+Next.js memiliki banyak optimasi built-in:
+- Automatic code splitting: JavaScript hanya dimuat untuk halaman yang dibutuhkan
+- Image optimization melalui komponen `<Image>`
+- Font optimization dengan `next/font`
+- Lazy loading otomatis untuk gambar dan komponen
+- Prefetching link untuk navigasi yang terasa instan
+
+### Developer Experience yang Luar Biasa
+
+- Hot Module Replacement (HMR) — perubahan kode langsung terlihat tanpa refresh penuh
+- TypeScript support out-of-the-box
+- File-based routing — nama file = URL path
+- API routes built-in
+- Error overlay yang informatif
+
+## Prerequisites sebelum Belajar Next.js
+
+Sebelum memulai Next.js, pastikan kamu sudah familiar dengan:
+- HTML dan CSS dasar
+- JavaScript (ES6+): arrow functions, destructuring, async/await, modules
+- React dasar: components, props, state, hooks (useState, useEffect)
+
+Jika belum familiar dengan React, pelajari React dulu minimal 2-4 minggu sebelum beralih ke Next.js.
+
+## Instalasi Next.js
+
+### Cara 1: create-next-app (Direkomendasikan)
+
+Cara paling mudah memulai Next.js:
+
+```bash
+npx create-next-app@latest nama-project
+```
+
+Kamu akan ditanya beberapa pertanyaan:
+- Would you like to use TypeScript? → Ya (sangat direkomendasikan)
+- Would you like to use ESLint? → Ya
+- Would you like to use Tailwind CSS? → Ya (untuk styling yang efisien)
+- Would you like to use `src/` directory? → Ya (untuk organisasi kode yang lebih baik)
+- Would you like to use App Router? → Ya (ini adalah cara modern Next.js)
+- Would you like to customize the default import alias? → Tidak untuk pemula
+
+Setelah instalasi:
+```bash
+cd nama-project
+npm run dev
+```
+
+Buka browser di `http://localhost:3000` — website kamu sudah berjalan!
+
+## Struktur Folder Next.js (App Router)
+
+```
+nama-project/
+├── src/
+│   └── app/
+│       ├── layout.tsx      # Root layout (HTML structure)
+│       ├── page.tsx        # Homepage (/)
+│       ├── globals.css     # Global CSS
+│       ├── about/
+│       │   └── page.tsx    # /about
+│       └── blog/
+│           ├── page.tsx    # /blog
+│           └── [slug]/
+│               └── page.tsx # /blog/nama-artikel
+├── public/                 # Static files (gambar, font, dll)
+├── next.config.js          # Konfigurasi Next.js
+└── package.json
+```
+
+### File-based Routing
+
+Di Next.js App Router, setiap folder dengan file `page.tsx` otomatis menjadi route. Ini sangat intuitif:
+
+- `app/page.tsx` → `yoursite.com/`
+- `app/about/page.tsx` → `yoursite.com/about`
+- `app/blog/page.tsx` → `yoursite.com/blog`
+- `app/blog/[slug]/page.tsx` → `yoursite.com/blog/nama-apapun`
+
+## Membuat Halaman Pertama
+
+Edit file `src/app/page.tsx`:
+
+```tsx
+export default function HomePage() {
+  return (
+    <main>
+      <h1>Selamat Datang di Website Saya</h1>
+      <p>Ini adalah website Next.js pertama saya.</p>
+    </main>
+  );
+}
+```
+
+Simpan — browser otomatis refresh dan menampilkan perubahan.
+
+## Navigasi Antar Halaman
+
+Gunakan komponen `Link` dari Next.js (bukan `<a>` biasa) untuk navigasi yang cepat:
+
+```tsx
+import Link from 'next/link';
+
+export default function Navigation() {
+  return (
+    <nav>
+      <Link href="/">Beranda</Link>
+      <Link href="/about">Tentang Kami</Link>
+      <Link href="/blog">Blog</Link>
+    </nav>
+  );
+}
+```
+
+`Link` secara otomatis melakukan prefetching halaman yang dituju, membuat navigasi terasa instan.
+
+## Optimasi Gambar dengan Next.js Image
+
+```tsx
+import Image from 'next/image';
+
+export default function HeroSection() {
+  return (
+    <Image
+      src="/hero-image.jpg"
+      alt="Hero image website bisnis"
+      width={1200}
+      height={600}
+      priority  // untuk gambar above-fold
+    />
+  );
+}
+```
+
+Komponen `Image` secara otomatis:
+- Mengkonversi ke format WebP
+- Melakukan lazy loading (kecuali dengan `priority`)
+- Mencegah Cumulative Layout Shift (CLS)
+- Menyesuaikan ukuran untuk berbagai layar
+
+## Fetch Data di Next.js
+
+### Static Data (SSG)
+
+Untuk konten yang tidak berubah sering:
+
+```tsx
+async function BlogPage() {
+  const posts = await fetch('https://api.example.com/posts').then(r => r.json());
+  
+  return (
+    <ul>
+      {posts.map(post => (
+        <li key={post.id}>{post.title}</li>
+      ))}
+    </ul>
+  );
+}
+```
+
+### Dynamic Data (SSR)
+
+Untuk konten yang perlu selalu fresh:
+
+```tsx
+async function DashboardPage() {
+  const data = await fetch('https://api.example.com/data', {
+    cache: 'no-store'  // Selalu fetch fresh
+  }).then(r => r.json());
+  
+  return <div>{data.content}</div>;
+}
+```
+
+## Metadata dan SEO
+
+Next.js menyediakan cara yang sangat mudah untuk mengelola meta tags:
+
+```tsx
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Website Bisnis Saya',
+  description: 'Deskripsi website untuk mesin pencari, maksimal 160 karakter.',
+  openGraph: {
+    title: 'Website Bisnis Saya',
+    description: 'Deskripsi untuk sharing di media sosial',
+    images: ['/og-image.jpg'],
+  },
+};
+
+export default function Page() {
+  return <main>Konten halaman</main>;
+}
+```
+
+## Deploy Next.js ke Production
+
+### Vercel (Paling Mudah)
+
+1. Push kode ke GitHub
+2. Buka vercel.com dan login dengan GitHub
+3. Import repository
+4. Klik Deploy — selesai!
+
+Vercel adalah platform yang dibuat oleh tim Next.js sendiri, jadi integrasi dan optimasinya sempurna.
+
+### Opsi Lain
+
+- **Netlify**: mirip Vercel, juga sangat mudah
+- **Cloudflare Pages**: gratis dengan CDN global
+- **Railway atau Render**: untuk deployment yang butuh server (SSR)
+- **VPS sendiri**: deploy dengan `npm run build` + `npm start` + PM2
+
+## Kapan Pilih Next.js vs Platform Lain?
+
+**Next.js cocok untuk:**
+- Website dengan banyak halaman dinamis
+- Blog atau portal konten
+- E-commerce dengan banyak produk
+- Dashboard atau aplikasi web
+- Website yang butuh kombinasi SSG dan SSR
+
+**Mungkin over-engineering jika:**
+- Hanya butuh website company profile sederhana yang jarang berubah (Astro lebih cocok)
+- Tidak familiar dengan React (pelajari React dulu)
+
+## Kesimpulan
+
+Next.js adalah framework yang sangat powerful dan relatif mudah dipelajari jika kamu sudah mengenal React. Kombinasi performa tinggi, SEO built-in, dan developer experience yang excellent menjadikannya pilihan terbaik untuk membangun website bisnis modern. Mulai dengan `create-next-app`, eksplor routing dan data fetching, lalu deploy ke Vercel. Dalam beberapa hari, kamu sudah bisa memiliki website Next.js yang fully functional dan siap production.

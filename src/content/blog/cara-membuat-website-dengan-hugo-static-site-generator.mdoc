@@ -1,0 +1,331 @@
+---
+judul: Cara Membuat Website dengan Hugo Static Site Generator
+tanggal: '2026-08-27'
+ringkasan: Panduan lengkap membuat website dengan Hugo static site generator, framework Go yang terkenal sangat cepat untuk membangun website statis profesional.
+---
+
+## Apa Itu Hugo?
+
+Hugo adalah static site generator (SSG) yang dibangun dengan bahasa Go. Diluncurkan pada 2013, Hugo dikenal sebagai salah satu SSG tercepat di dunia — mampu membangun ribuan halaman dalam hitungan detik. Ini membuatnya menjadi pilihan favorit untuk website dengan volume konten besar seperti dokumentasi teknis, blog dengan ratusan post, dan website enterprise.
+
+Hugo menghasilkan file HTML statis yang bisa di-hosting di hampir mana saja — dari CDN global hingga server sederhana — tanpa perlu database atau server-side scripting. Hasilnya: website yang sangat cepat, sangat aman, dan sangat murah untuk di-host.
+
+## Mengapa Memilih Hugo?
+
+### Kecepatan Build yang Luar Biasa
+
+Hugo membangun website dalam hitungan milidetik per halaman. Website dengan 1.000 post bisa selesai di-build dalam waktu kurang dari 1 detik — jauh lebih cepat dari Jekyll, Gatsby, atau bahkan Next.js dalam mode SSG.
+
+Ini sangat penting untuk workflow development yang intens di mana kamu sering rebuild setelah perubahan.
+
+### Tidak Perlu Node.js atau Ruby
+
+Hugo adalah binary tunggal yang bisa langsung dijalankan tanpa menginstall runtime lain. Tidak ada `npm install` yang membutuhkan waktu lama, tidak ada dependency hell. Download Hugo, jalankan, selesai.
+
+### Templating yang Powerful
+
+Hugo menggunakan Go's html/template package yang sangat powerful untuk membuat layout yang kompleks, dengan dukungan partial templates, shortcodes, dan data files.
+
+### Dukungan Konten yang Fleksibel
+
+Hugo mendukung Markdown, HTML, AsciiDoc, dan RST sebagai format konten. Frontmatter bisa menggunakan YAML, TOML, atau JSON.
+
+## Instalasi Hugo
+
+### macOS
+
+```bash
+brew install hugo
+```
+
+### Ubuntu/Debian
+
+```bash
+# Unduh binary terbaru dari GitHub releases
+wget https://github.com/gohugoio/hugo/releases/download/v0.140.0/hugo_extended_0.140.0_linux-arm64.deb
+sudo dpkg -i hugo_extended_0.140.0_linux-arm64.deb
+```
+
+Atau gunakan snap:
+```bash
+sudo snap install hugo
+```
+
+### Windows
+
+```bash
+winget install Hugo.Hugo.Extended
+```
+
+Verifikasi instalasi:
+```bash
+hugo version
+```
+
+## Membuat Website Hugo Baru
+
+```bash
+hugo new site nama-website
+cd nama-website
+```
+
+Struktur folder yang dibuat:
+
+```
+nama-website/
+├── archetypes/     # Template frontmatter untuk konten baru
+├── assets/         # File yang diproses Hugo Pipes (SCSS, JS)
+├── content/        # Semua konten Markdown
+├── data/           # Data files (JSON, YAML, TOML)
+├── layouts/        # Template HTML
+├── static/         # File statis (gambar, font)
+├── themes/         # Tema Hugo
+└── hugo.toml       # Konfigurasi utama
+```
+
+## Menambahkan Tema
+
+Hugo memiliki ekosistem tema yang kaya di themes.gohugo.io. Cara menambahkan tema via Git submodule:
+
+```bash
+# Inisialisasi Git terlebih dahulu
+git init
+
+# Tambahkan tema sebagai submodule (contoh: tema PaperMod)
+git submodule add https://github.com/adityatelange/hugo-PaperMod themes/PaperMod
+
+# Atau clone langsung (tanpa submodule)
+git clone https://github.com/adityatelange/hugo-PaperMod themes/PaperMod
+```
+
+Daftarkan tema di konfigurasi:
+
+```toml
+# hugo.toml
+baseURL = 'https://namiroh.web.id/'
+languageCode = 'id-id'
+title = 'Namiroh Web Blog'
+theme = 'PaperMod'
+```
+
+## Konfigurasi Hugo
+
+File `hugo.toml` adalah pusat konfigurasi website:
+
+```toml
+baseURL = 'https://namiroh.web.id/'
+languageCode = 'id-id'
+title = 'Namiroh Web - Jasa Pembuatan Website'
+theme = 'PaperMod'
+
+[params]
+  description = "Jasa pembuatan website profesional untuk bisnis Indonesia"
+  author = "Namiroh Web"
+  ShowReadingTime = true
+  ShowShareButtons = true
+
+[menu]
+  [[menu.main]]
+    name = "Beranda"
+    url = "/"
+    weight = 1
+  [[menu.main]]
+    name = "Blog"
+    url = "/blog/"
+    weight = 2
+  [[menu.main]]
+    name = "Layanan"
+    url = "/layanan/"
+    weight = 3
+```
+
+## Membuat Konten
+
+### Halaman Baru
+
+```bash
+hugo new content/blog/artikel-pertama.md
+```
+
+Hugo akan membuat file dengan frontmatter default dari archetype:
+
+```markdown
+---
+title: "Artikel Pertama"
+date: 2026-08-27T10:00:00+07:00
+draft: true
+---
+
+Isi artikel di sini...
+```
+
+Ubah `draft: true` ke `draft: false` saat siap dipublikasikan.
+
+### Halaman Statis
+
+```bash
+hugo new content/layanan.md
+hugo new content/tentang.md
+```
+
+## Membuat Layout Kustom
+
+Hugo menggunakan sistem layout yang fleksibel. Layout dicari berdasarkan urutan lookup:
+
+Untuk halaman blog (`content/blog/artikel.md`), Hugo mencari layout di:
+1. `layouts/blog/single.html`
+2. `layouts/_default/single.html`
+
+Contoh layout single post sederhana:
+
+```html
+<!-- layouts/_default/single.html -->
+<!DOCTYPE html>
+<html lang="{{ .Site.LanguageCode }}">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ .Title }} - {{ .Site.Title }}</title>
+  <meta name="description" content="{{ .Description }}">
+</head>
+<body>
+  <header>
+    <nav>
+      {{ range .Site.Menus.main }}
+        <a href="{{ .URL }}">{{ .Name }}</a>
+      {{ end }}
+    </nav>
+  </header>
+  
+  <main>
+    <article>
+      <h1>{{ .Title }}</h1>
+      <time>{{ .Date.Format "02 January 2006" }}</time>
+      {{ .Content }}
+    </article>
+  </main>
+</body>
+</html>
+```
+
+## Shortcodes: Komponen yang Bisa Dipakai di Konten
+
+Shortcodes adalah fungsi template yang bisa dipanggil dari dalam konten Markdown:
+
+Buat file `layouts/shortcodes/callout.html`:
+```html
+<div class="callout callout-{{ .Get "type" | default "info" }}">
+  {{ .Inner | markdownify }}
+</div>
+```
+
+Gunakan di konten:
+```markdown
+{{< callout type="warning" >}}
+Pastikan backup data sebelum melakukan update!
+{{< /callout >}}
+```
+
+## Hugo Pipes: Aset Processing
+
+Hugo Pipes memungkinkan pemrosesan aset langsung dari template:
+
+```html
+<!-- layouts/partials/head.html -->
+{{ $style := resources.Get "css/main.scss" | css.Sass | minify | fingerprint }}
+<link rel="stylesheet" href="{{ $style.Permalink }}">
+
+{{ $js := resources.Get "js/app.js" | js.Build | minify | fingerprint }}
+<script src="{{ $js.Permalink }}"></script>
+```
+
+Fitur ini memungkinkan minifikasi CSS/JS, transpilasi SCSS, dan cache busting otomatis.
+
+## Menjalankan Development Server
+
+```bash
+# Server development dengan live reload
+hugo server
+
+# Termasuk draft content
+hugo server -D
+
+# Akses di http://localhost:1313
+```
+
+## Build untuk Production
+
+```bash
+hugo
+
+# Output ada di folder public/
+# Upload ke hosting atau deploy ke CDN
+```
+
+## Deploy Hugo ke Berbagai Platform
+
+### Cloudflare Pages
+
+1. Push kode ke GitHub
+2. Buka Cloudflare Pages
+3. Connect repository
+4. Build command: `hugo`
+5. Build output: `public`
+6. Deploy!
+
+### Netlify
+
+Buat file `netlify.toml`:
+```toml
+[build]
+  publish = "public"
+  command = "hugo --gc --minify"
+
+[context.production.environment]
+  HUGO_VERSION = "0.140.0"
+  HUGO_ENV = "production"
+```
+
+### GitHub Pages
+
+Buat file `.github/workflows/hugo.yml`:
+```yaml
+name: Deploy Hugo to GitHub Pages
+on:
+  push:
+    branches: [main]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: '0.140.0'
+          extended: true
+      - name: Build
+        run: hugo --minify
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
+```
+
+## Hugo vs Alternatiif Lain
+
+| Aspek | Hugo | Astro | Jekyll | Next.js SSG |
+|-------|------|-------|--------|-------------|
+| Build speed | ⚡ Tercepat | Cepat | Lambat | Sedang |
+| Bahasa | Go templates | JSX/Astro | Liquid | React/JSX |
+| Kurva belajar | Sedang | Mudah | Mudah | Perlu React |
+| Ekosistem | Tema banyak | Plugin banyak | Tema banyak | Ekosistem besar |
+| Interaktivitas | Terbatas | Islands | Terbatas | Full |
+
+Hugo unggul untuk website konten berat yang butuh build cepat. Astro lebih fleksibel dan modern. Next.js cocok untuk aplikasi web interaktif.
+
+## Kesimpulan
+
+Hugo adalah pilihan excellent untuk website yang mengutamakan kecepatan build, website dengan volume konten besar, atau tim yang tidak familiar dengan ekosistem Node.js. Performanya yang luar biasa dan kemudahan deployment membuat Hugo tetap relevan di 2026 meskipun framework JavaScript semakin populer. Mulai dengan tema siap pakai, kuasai sistem templating Hugo, dan kamu akan memiliki website statis yang sangat cepat dalam waktu singkat.

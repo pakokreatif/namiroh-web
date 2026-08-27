@@ -1,0 +1,294 @@
+---
+judul: Cara Membuat Website dengan Astro untuk Performa Terbaik
+tanggal: '2026-08-27'
+ringkasan: Panduan lengkap membuat website dengan Astro framework untuk mendapatkan performa terbaik, SEO optimal, dan pengalaman developer yang menyenangkan.
+---
+
+## Mengapa Astro Menjadi Pilihan Utama untuk Website Performa Tinggi?
+
+Astro adalah framework web modern yang dirancang dengan filosofi yang berbeda dari framework JavaScript lainnya: **ship less JavaScript**. Sementara framework seperti React, Vue, atau Next.js secara default mengirimkan banyak JavaScript ke browser, Astro secara default menghasilkan HTML statis yang hampir tidak memiliki JavaScript sama sekali.
+
+Hasilnya? Website Astro rata-rata memiliki PageSpeed score mendekati 100, loading hampir instan, dan Core Web Vitals yang sangat baik. Ini menjadikan Astro pilihan ideal untuk website marketing, blog, company profile, portofolio, dan website konten yang mengutamakan performa dan SEO.
+
+## Keunggulan Utama Astro
+
+### Zero JavaScript by Default
+
+Komponen Astro di-render di server menjadi HTML statis. JavaScript hanya dikirim ke browser jika kamu secara eksplisit memintanya menggunakan **Islands Architecture** dan directive `client:*`. Ini adalah paradigma "opt-in interactivity" yang berlawanan dengan kebanyakan framework modern yang "opt-out interactivity."
+
+### Islands Architecture
+
+Konsep unik Astro: halaman sebagian besar adalah HTML statis, tapi ada "pulau" (islands) interaktif yang memuat JavaScript sesuai kebutuhan. Kamu bisa kontrol kapan JavaScript dimuat:
+
+- `client:load` — muat langsung saat halaman dimuat
+- `client:idle` — muat saat browser idle
+- `client:visible` — muat saat komponen masuk viewport
+- `client:media` — muat berdasarkan media query
+
+### Framework Agnostic
+
+Astro mendukung komponen dari berbagai framework dalam satu project:
+```astro
+---
+import ReactComponent from './ReactComponent.jsx';
+import VueComponent from './VueComponent.vue';
+import SvelteComponent from './SvelteComponent.svelte';
+---
+
+<ReactComponent client:load />
+<VueComponent client:visible />
+<SvelteComponent client:idle />
+```
+
+### Koleksi Konten yang Powerful
+
+Astro memiliki Content Collections API yang sangat baik untuk mengelola konten Markdown, MDX, dan format lainnya dengan type safety penuh.
+
+### Integrasi Sempurna dengan Keystatic
+
+Astro + Keystatic adalah kombinasi yang sangat powerful untuk website dengan konten yang dikelola tim non-developer — persis seperti kasus namiroh.web.id.
+
+## Instalasi dan Setup Astro
+
+### Cara Memulai
+
+```bash
+npm create astro@latest nama-project
+```
+
+Wizard akan menanyakan:
+- Template (recommend: "Blog" atau "Minimal")
+- TypeScript support (pilih "Strict" untuk best practices)
+- Install dependencies?
+
+Lalu:
+```bash
+cd nama-project
+npm run dev
+```
+
+Buka `http://localhost:4321` — website Astro kamu sudah berjalan!
+
+### Tambah Integrasi Populer
+
+```bash
+# Tailwind CSS
+npx astro add tailwind
+
+# React (jika butuh komponen interaktif)
+npx astro add react
+
+# Sitemap (untuk SEO)
+npx astro add sitemap
+
+# Keystatic (untuk CMS)
+npx astro add keystatic
+
+# MDX (Markdown yang diperkaya)
+npx astro add mdx
+```
+
+## Struktur Folder Astro
+
+```
+nama-project/
+├── src/
+│   ├── components/     # Komponen yang bisa di-reuse
+│   ├── layouts/        # Template halaman
+│   ├── pages/          # Setiap file = satu route
+│   │   ├── index.astro # Homepage (/)
+│   │   ├── about.astro # /about
+│   │   └── blog/
+│   │       └── [slug].astro # Dynamic route /blog/nama-artikel
+│   └── content/        # Konten terstruktur (blog posts, dll)
+│       └── blog/       # Koleksi "blog"
+│           └── artikel-pertama.md
+├── public/             # File statis (gambar, font, dll)
+├── astro.config.mjs    # Konfigurasi Astro
+└── package.json
+```
+
+## Sintaks Komponen Astro
+
+File `.astro` memiliki dua bagian: frontmatter (JavaScript) dan template (HTML-like):
+
+```astro
+---
+// Ini adalah "component script" — berjalan di server
+import SomeComponent from '../components/SomeComponent.astro';
+
+const title = "Judul Halaman Saya";
+const posts = await Astro.glob('../content/blog/*.md');
+---
+
+<!-- Ini adalah "component template" — menghasilkan HTML -->
+<html lang="id">
+  <head>
+    <title>{title}</title>
+  </head>
+  <body>
+    <h1>{title}</h1>
+    <ul>
+      {posts.map(post => (
+        <li>
+          <a href={post.url}>{post.frontmatter.title}</a>
+        </li>
+      ))}
+    </ul>
+    <SomeComponent />
+  </body>
+</html>
+```
+
+## Content Collections — Cara Modern Mengelola Konten
+
+### Definisikan Skema Koleksi
+
+```typescript
+// src/content/config.ts
+import { defineCollection, z } from 'astro:content';
+
+const blogCollection = defineCollection({
+  type: 'content',
+  schema: z.object({
+    judul: z.string(),
+    tanggal: z.string(),
+    ringkasan: z.string().max(160),
+    thumbnail: z.string().optional(),
+  }),
+});
+
+export const collections = {
+  blog: blogCollection,
+};
+```
+
+### Gunakan Koleksi di Halaman
+
+```astro
+---
+// src/pages/blog/index.astro
+import { getCollection } from 'astro:content';
+
+const semuaArtikel = await getCollection('blog');
+const artikelTerurut = semuaArtikel.sort(
+  (a, b) => new Date(b.data.tanggal).valueOf() - new Date(a.data.tanggal).valueOf()
+);
+---
+
+<ul>
+  {artikelTerurut.map(artikel => (
+    <li>
+      <a href={`/blog/${artikel.slug}`}>{artikel.data.judul}</a>
+      <p>{artikel.data.ringkasan}</p>
+    </li>
+  ))}
+</ul>
+```
+
+### Halaman Dynamic untuk Setiap Artikel
+
+```astro
+---
+// src/pages/blog/[slug].astro
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map(post => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await post.render();
+---
+
+<article>
+  <h1>{post.data.judul}</h1>
+  <time>{post.data.tanggal}</time>
+  <Content />
+</article>
+```
+
+## SEO dengan Astro
+
+Astro sangat baik untuk SEO karena semua halaman adalah HTML statis. Buat komponen SEO yang reusable:
+
+```astro
+---
+// src/components/SEO.astro
+const { title, description, ogImage } = Astro.props;
+---
+
+<title>{title}</title>
+<meta name="description" content={description} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+{ogImage && <meta property="og:image" content={ogImage} />}
+<link rel="canonical" href={Astro.url} />
+```
+
+## Deploy Astro ke Production
+
+### Vercel
+
+```bash
+# Install adapter
+npx astro add vercel
+
+# Deploy otomatis via GitHub integration
+```
+
+### Cloudflare Pages
+
+```bash
+# Install adapter
+npx astro add cloudflare
+```
+
+### Netlify
+
+```bash
+npx astro add netlify
+```
+
+### Static (paling simple)
+
+Untuk hosting statis apapun:
+```bash
+npm run build
+# Output ada di dist/ folder
+# Upload ke server, S3, GitHub Pages, dll
+```
+
+## Astro vs Next.js: Kapan Pilih Mana?
+
+**Pilih Astro jika:**
+- Website konten (blog, marketing, company profile, dokumentasi)
+- SEO adalah prioritas utama
+- Tim punya anggota non-developer yang kelola konten
+- Ingin performa maksimal dengan usaha minimal
+
+**Pilih Next.js jika:**
+- Aplikasi web dengan banyak interaktivitas (dashboard, e-commerce kompleks)
+- Butuh SSR yang sangat dinamis
+- Tim sudah familiar dengan React ecosystem
+
+## Integrasi Keystatic dengan Astro
+
+Kombinasi sempurna untuk CMS berbasis Git:
+
+```bash
+npx astro add keystatic
+```
+
+Keystatic menggunakan file Markdown/MDX yang disimpan di repository sebagai "database" — perubahan konten adalah commit Git. Ini memberikan:
+- Version history konten otomatis
+- Interface editor yang ramah untuk non-developer
+- Workflow yang developer-friendly
+
+## Kesimpulan
+
+Astro adalah framework terbaik untuk website yang mengutamakan performa dan SEO. Dengan filosofi zero-JavaScript-by-default dan Islands Architecture, Astro menghasilkan website yang lebih cepat dari framework apapun untuk kasus penggunaan website konten. Kombinasikan dengan Tailwind CSS untuk styling dan Keystatic untuk CMS, dan kamu punya stack yang sangat powerful, modern, dan mudah dikelola untuk website bisnis apapun.

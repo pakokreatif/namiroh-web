@@ -1,0 +1,298 @@
+---
+judul: Cara Membuat Website yang Ramah Difabel
+tanggal: '2026-08-27'
+ringkasan: Panduan praktis membuat website ramah difabel yang inklusif, memenuhi standar WCAG, dan bisa diakses semua orang tanpa terkecuali.
+---
+
+## Mengapa Website Harus Ramah Difabel?
+
+Website yang ramah difabel bukan hanya soal kepatuhan hukum atau standar teknis — ini tentang membangun pengalaman digital yang benar-benar inklusif. Di Indonesia, diperkirakan ada lebih dari 22 juta penyandang disabilitas. Ketika website kamu tidak accessible bagi mereka, kamu tidak hanya kehilangan audiens yang signifikan, tapi juga secara aktif mengecualikan sebagian komunitas dari layanan atau informasi yang kamu tawarkan.
+
+Lebih dari itu, banyak prinsip desain yang membuat website ramah difabel juga menguntungkan pengguna non-difabel: teks yang jelas membantu semua orang di kondisi pencahayaan buruk, navigasi keyboard memudahkan pengguna power user, dan struktur yang baik membantu semua orang menemukan informasi lebih cepat.
+
+## Memahami Berbagai Jenis Disabilitas dalam Konteks Web
+
+### Disabilitas Visual
+
+Pengguna tunanetra menggunakan screen reader (pembaca layar) seperti NVDA, JAWS, atau VoiceOver untuk "membaca" konten website. Screen reader membaca teks dari atas ke bawah, termasuk alt text gambar dan label form.
+
+Pengguna dengan low vision mungkin menggunakan zoom yang sangat besar, mode kontras tinggi, atau software magnification.
+
+### Disabilitas Motorik
+
+Pengguna yang tidak bisa menggunakan mouse mengandalkan keyboard, switch device, atau eye-tracking untuk navigasi. Website harus sepenuhnya navigable menggunakan keyboard saja.
+
+### Disabilitas Pendengaran
+
+Konten audio dan video harus memiliki alternatif teks (subtitle, transcript) untuk pengguna tunarungu atau hard of hearing.
+
+### Disabilitas Kognitif
+
+Pengguna dengan disleksia, ADHD, atau gangguan kognitif lainnya mendapat manfaat dari bahasa yang jelas, layout yang konsisten, dan instruksi yang sederhana.
+
+## Panduan Implementasi Website Ramah Difabel
+
+### 1. Teks Alternatif untuk Semua Gambar
+
+Setiap gambar yang membawa makna harus memiliki alt text yang deskriptif:
+
+```html
+<!-- Gambar bermakna -->
+<img src="team.jpg" alt="Lima anggota tim Namiroh Web berfoto bersama di depan papan tulis berisi diagram wireframe website">
+
+<!-- Gambar dekoratif - kosongkan alt -->
+<img src="divider.png" alt="" role="presentation">
+
+<!-- Gambar kompleks seperti infografis -->
+<figure>
+  <img src="infographic.png" alt="Infografis proses pembuatan website">
+  <figcaption>Detail proses: 1) Konsultasi, 2) Desain, 3) Development, 4) Testing, 5) Launch. Setiap tahap membutuhkan 3-7 hari kerja.</figcaption>
+</figure>
+```
+
+### 2. Kontras Warna yang Memadai
+
+Standar WCAG 2.2 AA:
+- Teks normal (< 18pt): rasio kontras minimal **4.5:1**
+- Teks besar (≥ 18pt atau ≥ 14pt bold): minimal **3:1**
+- Komponen UI (tombol, input border): minimal **3:1**
+
+Cara cek kontras:
+- Chrome DevTools → Accessibility panel
+- WebAIM Contrast Checker (webaim.org/resources/contrastchecker)
+- Coolors.co contrast checker
+
+Contoh kombinasi warna yang aman:
+- Teks hitam (#000000) di background putih (#FFFFFF): 21:1 ✓
+- Teks putih (#FFFFFF) di background biru (#1D4ED8): 7.2:1 ✓
+- Teks abu (#767676) di background putih (#FFFFFF): 4.54:1 ✓ (barely)
+- Teks abu terang (#AAAAAA) di background putih: 2.32:1 ✗ (gagal)
+
+### 3. Navigasi Keyboard yang Lengkap
+
+Semua fungsi interaktif harus bisa diakses via keyboard:
+
+**Tab order yang logis**: urutan Tab harus mengikuti alur visual kiri-ke-kanan, atas-ke-bawah. Gunakan `tabindex="0"` untuk elemen custom yang perlu fokus, dan hindari `tabindex` positif yang bisa mengacaukan urutan natural.
+
+**Focus indicator yang visible**: jangan hapus outline fokus default! Jika ingin mengkustomisasi, pastikan penggantinya tetap jelas:
+
+```css
+/* Jangan lakukan ini */
+:focus { outline: none; }
+
+/* Lakukan ini sebagai gantinya */
+:focus {
+  outline: 3px solid #0066CC;
+  outline-offset: 2px;
+}
+
+/* Atau gunakan :focus-visible untuk hanya tampil saat navigasi keyboard */
+:focus-visible {
+  outline: 3px solid #0066CC;
+  outline-offset: 2px;
+}
+```
+
+**Skip navigation link**: tambahkan di awal halaman untuk memungkinkan pengguna keyboard skip menus:
+
+```html
+<a href="#main-content" class="skip-link">Langsung ke konten utama</a>
+
+<style>
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: #000;
+  color: #fff;
+  padding: 8px;
+  z-index: 100;
+  transition: top 0.3s;
+}
+.skip-link:focus {
+  top: 0;
+}
+</style>
+```
+
+### 4. HTML Semantik yang Tepat
+
+HTML semantik membantu screen reader memahami struktur halaman:
+
+```html
+<!-- Struktur halaman yang benar -->
+<header>
+  <nav aria-label="Navigasi Utama">
+    <ul>
+      <li><a href="/">Beranda</a></li>
+      <li><a href="/layanan">Layanan</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main id="main-content">
+  <article>
+    <h1>Judul Halaman</h1>
+    <section>
+      <h2>Bagian Pertama</h2>
+      <p>Konten...</p>
+    </section>
+  </article>
+  
+  <aside aria-label="Artikel Terkait">
+    <h2>Baca Juga</h2>
+  </aside>
+</main>
+
+<footer>
+  <p>&copy; 2026 Namiroh Web</p>
+</footer>
+```
+
+### 5. Form yang Accessible
+
+```html
+<!-- Form yang benar -->
+<form>
+  <div class="form-group">
+    <label for="nama">Nama Lengkap <span aria-label="wajib diisi">*</span></label>
+    <input 
+      type="text" 
+      id="nama" 
+      name="nama" 
+      required
+      aria-required="true"
+      autocomplete="name"
+    >
+  </div>
+  
+  <div class="form-group">
+    <label for="email">Alamat Email</label>
+    <input 
+      type="email" 
+      id="email" 
+      name="email"
+      aria-describedby="email-hint"
+    >
+    <span id="email-hint" class="hint">Contoh: nama@email.com</span>
+  </div>
+  
+  <!-- Error message yang accessible -->
+  <div class="form-group error">
+    <label for="telepon">Nomor Telepon</label>
+    <input 
+      type="tel" 
+      id="telepon" 
+      name="telepon"
+      aria-describedby="telepon-error"
+      aria-invalid="true"
+    >
+    <span id="telepon-error" role="alert" class="error-message">
+      Nomor telepon harus diisi dengan angka, minimal 10 digit
+    </span>
+  </div>
+</form>
+```
+
+### 6. Konten Media yang Accessible
+
+**Video dengan subtitle:**
+```html
+<video controls>
+  <source src="demo.mp4" type="video/mp4">
+  <track kind="subtitles" src="demo-id.vtt" srclang="id" label="Bahasa Indonesia" default>
+  <track kind="subtitles" src="demo-en.vtt" srclang="en" label="English">
+</video>
+```
+
+**Audio dengan transcript:**
+```html
+<audio controls>
+  <source src="podcast.mp3" type="audio/mpeg">
+</audio>
+<details>
+  <summary>Baca Transkrip</summary>
+  <div class="transcript">
+    <p>[00:00] Host: Selamat datang di podcast kami...</p>
+  </div>
+</details>
+```
+
+### 7. Jangan Andalkan Warna Saja
+
+Informasi tidak boleh hanya disampaikan melalui warna — harus ada indikator visual lain:
+
+```html
+<!-- Buruk: hanya warna yang membedakan error -->
+<input type="text" style="border-color: red">
+
+<!-- Baik: ikon + teks + warna -->
+<div class="form-group error">
+  <input type="text" aria-invalid="true" aria-describedby="error-msg">
+  <span id="error-msg">
+    <span aria-hidden="true">⚠️</span> <!-- Ikon dekoratif -->
+    <strong>Error:</strong> Field ini wajib diisi
+  </span>
+</div>
+```
+
+### 8. Teks yang Mudah Dibaca
+
+- Font minimal 16px untuk body text
+- Line height minimal 1.5
+- Jangan gunakan teks semua huruf kapital (sulit dibaca, terutama untuk disleksia)
+- Panjang baris teks idealnya 45-75 karakter
+- Hindari teks di atas background gambar tanpa overlay kontras
+- Jangan animasikan teks — menyulitkan pembacaan
+
+### 9. Interaksi Sentuh yang Ramah
+
+Untuk pengguna mobile dengan keterbatasan motorik:
+- Touch target minimal 44x44 piksel (rekomendasi Apple) atau 48x48dp (Google)
+- Jarak minimal 8px antar touch target
+- Hindari gestur yang kompleks sebagai satu-satunya cara interaksi
+
+## Tools untuk Testing Aksesibilitas
+
+### Automated Testing
+
+```bash
+# axe-core via CLI
+npm install -g @axe-core/cli
+axe https://namiroh.web.id --reporter=json
+
+# Pa11y
+npm install -g pa11y
+pa11y https://namiroh.web.id
+```
+
+### Browser Extensions
+
+- **axe DevTools** (Chrome/Firefox): audit paling comprehensive
+- **WAVE** (Chrome/Firefox): visual overlay masalah aksesibilitas
+- **Accessibility Insights** (Microsoft): guided testing dengan smart recommendations
+
+### Manual Testing dengan Screen Reader
+
+1. **NVDA** (Windows, gratis): screen reader paling banyak digunakan
+2. **VoiceOver** (macOS/iOS, built-in): Cmd+F5 untuk mengaktifkan
+3. **TalkBack** (Android, built-in): untuk testing mobile
+
+Cara test sederhana: tutup mata, nyalakan screen reader, dan coba gunakan website kamu dari awal hingga selesai melakukan satu task (misalnya mengisi form kontak).
+
+## Checklist Aksesibilitas Dasar
+
+- [ ] Semua gambar memiliki alt text yang deskriptif
+- [ ] Kontras warna memenuhi WCAG 2.2 AA minimum
+- [ ] Semua fungsi bisa diakses via keyboard
+- [ ] Focus indicator terlihat jelas
+- [ ] Ada skip navigation link
+- [ ] Heading terstruktur secara hierarkis (H1→H2→H3)
+- [ ] Semua form input memiliki label yang terkait
+- [ ] Video memiliki subtitle atau transcript
+- [ ] Informasi tidak hanya disampaikan melalui warna
+- [ ] Font size minimal 16px dan line height minimal 1.5
+
+## Kesimpulan
+
+Membuat website yang ramah difabel bukanlah pekerjaan yang mengintimidasi jika dilakukan secara sistematis. Mulai dengan fondasi HTML semantik yang benar, pastikan kontras warna dan alt text sudah benar, lalu uji navigasi keyboard. Gunakan axe DevTools untuk audit otomatis, dan sesekali uji manual dengan screen reader. Setiap improvement dalam aksesibilitas tidak hanya membantu pengguna difabel — ini membuat website kamu lebih baik untuk semua orang.

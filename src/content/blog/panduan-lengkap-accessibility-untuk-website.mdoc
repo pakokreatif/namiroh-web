@@ -1,0 +1,221 @@
+---
+judul: Panduan Lengkap Accessibility untuk Website
+tanggal: '2026-08-27'
+ringkasan: Panduan lengkap accessibility website untuk memastikan semua pengguna dapat mengakses konten kamu, termasuk standar WCAG dan cara implementasinya.
+---
+
+## Apa Itu Web Accessibility?
+
+Web accessibility adalah praktik membangun website yang dapat digunakan oleh semua orang, termasuk mereka yang memiliki keterbatasan fisik, kognitif, atau sensoris. Ini mencakup pengguna yang menggunakan screen reader (karena tunanetra), navigasi keyboard (karena tidak bisa menggunakan mouse), atau yang memiliki keterbatasan pendengaran, kognitif, atau motorik.
+
+Menurut WHO, lebih dari 1 miliar orang di dunia hidup dengan beberapa bentuk disabilitas. Di Indonesia, jumlah penyandang disabilitas diperkirakan mencapai lebih dari 20 juta jiwa. Ketika website kamu tidak accessible, kamu secara aktif mengecualikan sebagian besar audiens potensial ini.
+
+## Mengapa Accessibility Penting?
+
+### Alasan Etis
+
+Setiap orang berhak mengakses informasi dan layanan digital. Web accessibility adalah tentang inklusi — memastikan tidak ada yang tertinggal hanya karena cara mereka berinteraksi dengan teknologi.
+
+### Dampak SEO yang Nyata
+
+Banyak praktik accessibility tumpang tindih dengan SEO terbaik:
+- Alt text pada gambar membantu screen reader DAN Google Images
+- Struktur heading yang benar (H1 → H2 → H3) membantu screen reader DAN crawler Google
+- Kecepatan loading yang baik membantu pengguna koneksi lambat DAN Core Web Vitals
+- Teks yang jelas dan mudah dibaca membantu semua pengguna DAN readability signals
+
+### Kepatuhan Hukum
+
+Di banyak negara, accessibility website mulai menjadi kewajiban hukum, terutama untuk website pemerintah dan layanan publik. Standar internasional yang paling banyak diadopsi adalah WCAG (Web Content Accessibility Guidelines).
+
+### Pasar yang Lebih Luas
+
+Pengguna dengan disabilitas memiliki daya beli yang signifikan. Website yang accessible juga membantu pengguna dalam situasi sementara (patah tangan, di lingkungan bising) dan pengguna lansia.
+
+## Standar WCAG: Panduan Utama Web Accessibility
+
+WCAG (Web Content Accessibility Guidelines) dikelola oleh W3C dan menjadi standar global untuk web accessibility. Versi terbaru adalah WCAG 2.2, dengan WCAG 3.0 dalam pengembangan.
+
+### Empat Prinsip POUR
+
+**Perceivable (Dapat Dirasakan)**: Informasi dan komponen UI harus bisa dipersepsi oleh semua pengguna.
+
+**Operable (Dapat Dioperasikan)**: Semua fungsi harus bisa dioperasikan oleh semua pengguna.
+
+**Understandable (Dapat Dipahami)**: Informasi dan operasi UI harus dipahami oleh semua pengguna.
+
+**Robust (Kuat)**: Konten harus cukup robust untuk diinterpretasikan oleh berbagai user agent termasuk assistive technology.
+
+### Level Kepatuhan
+
+- **Level A**: Kebutuhan dasar, minimum absolute
+- **Level AA**: Standar yang paling umum diadopsi (target yang realistis)
+- **Level AAA**: Standar tertinggi, tidak selalu praktis untuk semua konten
+
+Untuk kebanyakan website bisnis, menarget WCAG 2.2 Level AA adalah standar yang tepat.
+
+## Implementasi Accessibility: Panduan Praktis
+
+### 1. Alt Text untuk Semua Gambar
+
+Setiap gambar harus memiliki alt text yang deskriptif:
+
+```html
+<!-- Buruk -->
+<img src="tim.jpg" alt="gambar">
+
+<!-- Baik -->
+<img src="tim.jpg" alt="Tim Namiroh Web, 5 orang, sedang bekerja di kantor modern">
+
+<!-- Gambar dekoratif yang tidak perlu dibaca screen reader -->
+<img src="dekoratif.png" alt="">
+```
+
+Untuk gambar kompleks seperti grafik atau infografis, tambahkan deskripsi panjang (`longdesc` atau teks di bawah gambar).
+
+### 2. Kontras Warna yang Cukup
+
+WCAG 2.2 AA mensyaratkan:
+- **Teks normal**: kontras minimal 4.5:1
+- **Teks besar** (18pt+ atau 14pt bold): kontras minimal 3:1
+- **Komponen UI** (tombol, input): kontras minimal 3:1
+
+Tools untuk cek kontras:
+- **WebAIM Contrast Checker**: webaim.org/resources/contrastchecker
+- **Colour Contrast Analyser**: aplikasi desktop gratis
+- **Chrome DevTools**: Accessibility panel menampilkan kontras ratio
+
+### 3. Navigasi Keyboard
+
+Semua fungsi harus bisa diakses menggunakan keyboard saja (Tab, Shift+Tab, Enter, Space, arrow keys). Ini penting untuk pengguna yang tidak bisa menggunakan mouse.
+
+Pastikan:
+- **Focus visible**: elemen yang terfokus harus terlihat jelas secara visual. Jangan hilangkan `outline` CSS tanpa menggantinya dengan indicator fokus yang jelas
+- **Tab order logis**: urutan Tab harus mengikuti alur visual yang logis
+- **Skip navigation**: tambahkan link "Skip to main content" di awal halaman untuk pengguna keyboard
+
+```html
+<a href="#main-content" class="skip-link">Skip to main content</a>
+```
+
+### 4. Struktur Heading yang Benar
+
+Heading harus membentuk hierarki yang logis:
+
+```html
+<!-- Benar -->
+<h1>Judul Halaman Utama</h1>
+  <h2>Bagian 1</h2>
+    <h3>Sub-bagian 1.1</h3>
+    <h3>Sub-bagian 1.2</h3>
+  <h2>Bagian 2</h2>
+
+<!-- Salah - melompat level -->
+<h1>Judul</h1>
+  <h3>Langsung ke H3?</h3>
+```
+
+Jangan gunakan heading hanya untuk styling — gunakan CSS untuk mengatur tampilan, gunakan heading untuk struktur semantik.
+
+### 5. Form yang Accessible
+
+Setiap input form harus memiliki label yang terkait dengan benar:
+
+```html
+<!-- Benar - label terkait via 'for' dan 'id' -->
+<label for="nama">Nama Lengkap</label>
+<input type="text" id="nama" name="nama">
+
+<!-- Juga benar - label membungkus input -->
+<label>
+  Email <input type="email" name="email">
+</label>
+```
+
+Tambahkan pesan error yang deskriptif dan accessible:
+```html
+<input type="email" aria-describedby="email-error" aria-invalid="true">
+<span id="email-error" role="alert">Format email tidak valid. Contoh: nama@email.com</span>
+```
+
+### 6. ARIA (Accessible Rich Internet Applications)
+
+ARIA attributes membantu screen reader memahami komponen interaktif yang kompleks:
+
+```html
+<!-- Button toggle -->
+<button aria-expanded="false" aria-controls="menu">Menu</button>
+<nav id="menu" hidden>...</nav>
+
+<!-- Modal dialog -->
+<div role="dialog" aria-modal="true" aria-labelledby="dialog-title">
+  <h2 id="dialog-title">Judul Dialog</h2>
+</div>
+
+<!-- Loading state -->
+<div aria-live="polite" aria-busy="true">Memuat data...</div>
+```
+
+Prinsip penting: gunakan HTML semantik yang benar terlebih dahulu, ARIA hanya sebagai pelengkap.
+
+### 7. Video dan Audio yang Accessible
+
+- **Subtitle/caption** untuk semua video (bukan hanya auto-generated yang sering salah)
+- **Transcripts** untuk konten audio
+- Jangan autoplay audio atau video dengan suara
+- Kontrol player yang bisa diakses via keyboard
+
+### 8. Teks yang Mudah Dibaca
+
+- Ukuran font minimal 16px untuk body text
+- Line height minimal 1.5 untuk paragraf
+- Panjang baris teks 45-80 karakter untuk keterbacaan optimal
+- Hindari teks yang fully justified (rata kanan-kiri) yang bisa menciptakan "river" spasi
+- Jangan gunakan teks dalam gambar kecuali ada teks alternatif
+
+## Tools untuk Audit Accessibility
+
+### Automated Testing
+
+- **axe DevTools** (Chrome extension): cek otomatis masalah accessibility
+- **WAVE** (webaim.org/wave): visual report masalah accessibility
+- **Lighthouse** (Chrome DevTools): audit accessibility built-in, skor 0-100
+- **Pa11y**: command-line accessibility testing
+
+### Manual Testing
+
+Automated tools hanya bisa mendeteksi sekitar 30-40% masalah accessibility. Testing manual tetap penting:
+
+1. **Navigasi keyboard**: coba gunakan website hanya dengan Tab, Enter, dan arrow keys
+2. **Screen reader**: gunakan VoiceOver (Mac/iOS), NVDA (Windows, gratis), atau TalkBack (Android)
+3. **Zoom**: zoom ke 200% — apakah layout masih fungsional?
+4. **Warna**: cek tampilan dalam grayscale untuk memastikan informasi tidak hanya disampaikan lewat warna
+
+## Accessibility dalam Framework Modern
+
+### Astro
+
+Astro mendorong penggunaan HTML semantik. Gunakan komponen yang accessible:
+
+```astro
+<!-- Gunakan elemen HTML semantik yang benar -->
+<nav aria-label="Navigasi Utama">
+  <ul>
+    <li><a href="/">Beranda</a></li>
+  </ul>
+</nav>
+
+<main id="main-content">
+  <article>
+    <h1>{title}</h1>
+  </article>
+</main>
+```
+
+### React / Next.js
+
+ESLint plugin `eslint-plugin-jsx-a11y` secara otomatis mendeteksi masalah accessibility dalam kode React.
+
+## Kesimpulan
+
+Web accessibility bukan tentang checklist compliance semata — ini tentang membangun web yang benar-benar bisa digunakan semua orang. Mulai dengan fondasi yang kuat: alt text, kontras warna yang cukup, navigasi keyboard, dan struktur semantik yang benar. Gunakan Lighthouse atau axe untuk audit berkala. Dan ingat: accessibility yang baik hampir selalu sejalan dengan SEO yang baik dan UX yang baik. Membangun website yang accessible adalah membangun website yang lebih baik untuk semua orang.
