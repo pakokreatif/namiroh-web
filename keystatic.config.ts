@@ -4,6 +4,10 @@ export default config({
   storage: {
     kind: 'github',
     repo: 'pakokreatif/namiroh-web',
+    branchPrefix: 'keystatic/',
+  },
+  ui: {
+    brand: { name: 'An Namiroh CMS' },
   },
   collections: {
     blog: collection({
