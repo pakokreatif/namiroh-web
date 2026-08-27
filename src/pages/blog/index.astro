@@ -1,0 +1,59 @@
+---
+import { getCollection } from 'astro:content';
+const blogs = await getCollection('blog');
+---
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blog - An Namiroh</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', sans-serif; color: #1a1a1a; }
+    header { background: #1a3a2a; color: white; padding: 1.5rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+    header h1 { font-size: 1.5rem; }
+    nav a { color: #cde; text-decoration: none; margin-left: 1.5rem; }
+    .page-title { background: #f0f7f4; padding: 3rem 2rem; text-align: center; }
+    .page-title h2 { font-size: 2rem; color: #1a3a2a; }
+    .section { padding: 3rem 2rem; max-width: 800px; margin: 0 auto; }
+    .post { border-bottom: 1px solid #eee; padding: 1.5rem 0; }
+    .post h3 a { color: #1a3a2a; text-decoration: none; font-size: 1.3rem; }
+    .post h3 a:hover { color: #2d6a4f; }
+    .post p { color: #555; margin-top: 0.5rem; line-height: 1.6; }
+    .meta { font-size: 0.85rem; color: #999; margin-top: 0.5rem; }
+    footer { background: #1a3a2a; color: #adc; text-align: center; padding: 2rem; margin-top: 4rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🕌 An Namiroh</h1>
+    <nav>
+      <a href="/">Beranda</a>
+      <a href="/produk">Paket</a>
+      <a href="/blog">Blog</a>
+    </nav>
+  </header>
+
+  <div class="page-title">
+    <h2>Blog & Artikel</h2>
+    <p>Tips, panduan, dan inspirasi perjalanan ibadah</p>
+  </div>
+
+  <div class="section">
+    {blogs.length === 0 && <p>Belum ada artikel. Tambahkan lewat admin panel Keystatic.</p>}
+    {blogs.map(b => (
+      <div class="post">
+        <h3><a href={`/blog/${b.slug}`}>{b.data.judul}</a></h3>
+        {b.data.ringkasan && <p>{b.data.ringkasan}</p>}
+        {b.data.tanggal && <p class="meta">{b.data.tanggal}</p>}
+      </div>
+    ))}
+  </div>
+
+  <footer>
+    <p>© 2026 An Namiroh. Melayani dengan sepenuh hati.</p>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "nama": {
+      "type": "string"
+    },
+    "harga": {
+      "type": "string"
+    },
+    "kategori": {
+      "type": "string",
+      "enum": [
+        "umroh",
+        "haji",
+        "wisata"
+      ]
+    },
+    "gambar": {
+      "type": "string"
+    },
+    "tersedia": {
+      "default": true,
+      "type": "boolean"
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "nama",
+    "harga",
+    "kategori"
+  ]
+}

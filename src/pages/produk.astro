@@ -1,0 +1,65 @@
+---
+import { getCollection } from 'astro:content';
+const produks = await getCollection('produk');
+---
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Katalog Paket - An Namiroh</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', sans-serif; color: #1a1a1a; }
+    header { background: #1a3a2a; color: white; padding: 1.5rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+    header h1 { font-size: 1.5rem; }
+    nav a { color: #cde; text-decoration: none; margin-left: 1.5rem; }
+    .page-title { background: #f0f7f4; padding: 3rem 2rem; text-align: center; }
+    .page-title h2 { font-size: 2rem; color: #1a3a2a; }
+    .section { padding: 3rem 2rem; max-width: 1100px; margin: 0 auto; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
+    .card { border: 1px solid #e0e0e0; border-radius: 12px; padding: 1.5rem; }
+    .card h3 { color: #1a3a2a; margin-bottom: 0.5rem; }
+    .tag { display: inline-block; background: #e8f5e9; color: #2d6a4f; padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.8rem; margin-bottom: 0.5rem; }
+    .harga { font-size: 1.3rem; font-weight: bold; color: #f4a261; margin: 0.5rem 0; }
+    .badge { display: inline-block; background: #e8f5e9; color: #2d6a4f; padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.8rem; }
+    .badge.habis { background: #fde; color: #c33; }
+    footer { background: #1a3a2a; color: #adc; text-align: center; padding: 2rem; margin-top: 4rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🕌 An Namiroh</h1>
+    <nav>
+      <a href="/">Beranda</a>
+      <a href="/produk">Paket</a>
+      <a href="/blog">Blog</a>
+    </nav>
+  </header>
+
+  <div class="page-title">
+    <h2>Katalog Paket Perjalanan</h2>
+    <p>Temukan paket yang sesuai dengan kebutuhan Anda</p>
+  </div>
+
+  <div class="section">
+    <div class="grid">
+      {produks.map(p => (
+        <div class="card">
+          <span class="tag">{p.data.kategori}</span>
+          <h3>{p.data.nama}</h3>
+          <p class="harga">{p.data.harga}</p>
+          <span class={`badge ${p.data.tersedia ? '' : 'habis'}`}>
+            {p.data.tersedia ? '✓ Tersedia' : '✗ Penuh'}
+          </span>
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2026 An Namiroh. Melayani dengan sepenuh hati.</p>
+  </footer>
+</body>
+</html>

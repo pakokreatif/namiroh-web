@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "judul": {
+      "type": "string"
+    },
+    "tanggal": {
+      "type": "string"
+    },
+    "ringkasan": {
+      "type": "string"
+    },
+    "gambar": {
+      "type": "string"
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "judul"
+  ]
+}

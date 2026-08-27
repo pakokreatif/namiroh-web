@@ -1,0 +1,58 @@
+---
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const blogs = await getCollection('blog');
+  return blogs.map(b => ({ params: { slug: b.slug }, props: { post: b } }));
+}
+
+const { post } = Astro.props;
+const { Content } = await post.render();
+---
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{post.data.judul} - An Namiroh</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', sans-serif; color: #1a1a1a; }
+    header { background: #1a3a2a; color: white; padding: 1.5rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+    header h1 { font-size: 1.5rem; }
+    nav a { color: #cde; text-decoration: none; margin-left: 1.5rem; }
+    .article { max-width: 720px; margin: 3rem auto; padding: 0 2rem; }
+    .article h1 { font-size: 2rem; color: #1a3a2a; margin-bottom: 1rem; }
+    .meta { color: #999; font-size: 0.9rem; margin-bottom: 2rem; }
+    .content { line-height: 1.8; color: #333; }
+    .content h2 { margin: 2rem 0 1rem; color: #1a3a2a; }
+    .content p { margin-bottom: 1rem; }
+    .back { display: inline-block; margin-bottom: 2rem; color: #2d6a4f; text-decoration: none; }
+    footer { background: #1a3a2a; color: #adc; text-align: center; padding: 2rem; margin-top: 4rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🕌 An Namiroh</h1>
+    <nav>
+      <a href="/">Beranda</a>
+      <a href="/produk">Paket</a>
+      <a href="/blog">Blog</a>
+    </nav>
+  </header>
+
+  <div class="article">
+    <a href="/blog" class="back">← Kembali ke Blog</a>
+    <h1>{post.data.judul}</h1>
+    {post.data.tanggal && <p class="meta">{post.data.tanggal}</p>}
+    <div class="content">
+      <Content />
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2026 An Namiroh. Melayani dengan sepenuh hati.</p>
+  </footer>
+</body>
+</html>
